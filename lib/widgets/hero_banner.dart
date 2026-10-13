@@ -18,16 +18,25 @@ class HeroBanner extends StatelessWidget {
       borderRadius: BorderRadius.circular(24),
       child: SizedBox(
         height: 200,
+        width: double.infinity,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Couche 1 : image en arrière-plan
             Image.asset(
               destination.image,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: cs.surfaceContainerHighest,
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.image_not_supported_outlined,
+                    size: 48,
+                  ),
+                );
+              },
             ),
 
-            // Couche 2 : dégradé pour rendre le texte lisible
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -41,7 +50,6 @@ class HeroBanner extends StatelessWidget {
               ),
             ),
 
-            // Badge de la note
             Positioned(
               top: 16,
               right: 16,
@@ -75,7 +83,6 @@ class HeroBanner extends StatelessWidget {
               ),
             ),
 
-            // Textes en bas à gauche
             Positioned(
               left: 20,
               right: 130,
@@ -117,7 +124,6 @@ class HeroBanner extends StatelessWidget {
               ),
             ),
 
-            // Bouton en bas à droite
             Positioned(
               right: 16,
               bottom: 20,
@@ -140,15 +146,3 @@ class HeroBanner extends StatelessWidget {
     );
   }
 }
-
-/*
-Q4. Si DecoratedBox est placé avant l'image,
-l'image et les widgets placés après peuvent le recouvrir.
-Le dégradé doit donc être après l'image pour rester visible.
-
-Q5. Sans ClipRRect, l'image et le dégradé ne sont plus
-découpés selon les coins arrondis de la bannière.
-
-Q6. right: 130 réserve un espace à droite pour le bouton
-Découvrir et évite que le texte empiète sur celui-ci.
-*/
