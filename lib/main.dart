@@ -12,11 +12,12 @@ class RihlaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rihla',
       debugShowCheckedModeBanner: false,
+      title: 'Rihla',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0E7C86),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
         ),
       ),
       home: const HomeScreen(),
