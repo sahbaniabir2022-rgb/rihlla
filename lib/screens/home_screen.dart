@@ -2,17 +2,42 @@
 import 'package:flutter/material.dart';
 
 import '../data/destinations.dart';
+import '../models/destination.dart';
 import '../widgets/home_header.dart';
 import '../widgets/search_box.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/destination_card.dart';
 import '../widgets/section_title.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String _categorie = 'Tout';
+
+  List<Destination> get _filtrees {
+    if (_categorie == 'Tout') {
+      return destinations;
+    }
+
+    return destinations
+        .where((d) => d.categorie == _categorie)
+        .toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    const categories = [
+      'Tout',
+      'Désert',
+      'Plage',
+      'Culture',
+    ];
+
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -30,17 +55,62 @@ class HomeScreen extends StatelessWidget {
             const SectionTitle(title: 'Catégories'),
             const SizedBox(height: 12),
 
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: categories.map((c) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(c),
+                      selected: _categorie == c,
+                      onSelected: (selected) {
+                        setState(() {
+                          _categorie = c;
+                        });
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
             const SectionTitle(
               title: 'Populaires',
               action: 'Voir tout',
             ),
             const SizedBox(height: 12),
 
-            for (final d in destinations)
-              DestinationCard(destination: d),
+            if (_filtrees.isEmpty)
+              const Text(
+                'Aucune destination dans cette catégorie.',
+              )
+            else
+              for (final d in _filtrees)
+                DestinationCard(
+                  key: ValueKey(d.nom),
+                  destination: d,
+                ),
           ],
         ),
       ),
     );
   }
 }
+
+/*
+Q1. Sans setState(), la valeur de _categorie change
+en mémoire, mais Flutter ne reconstruit pas automatiquement
+l'écran. La puce et la liste affichées peuvent rester
+inchangées.
+
+Q2. _filtrees est un getter recalculé à chaque build()
+pour obtenir les destinations correspondant à la catégorie
+actuelle, sans conserver une liste filtrée obsolète.
+
+Q3. HeroBanner peut rester un StatelessWidget parce que
+son affichage dépend de la destination reçue en paramètre.
+Le changement de catégorie concerne la liste des cartes.
+*/
