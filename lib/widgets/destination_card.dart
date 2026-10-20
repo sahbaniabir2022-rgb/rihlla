@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
+import 'favorite_button.dart';
 
-class DestinationCard extends StatefulWidget {
+class DestinationCard extends StatelessWidget {
   final Destination destination;
 
   const DestinationCard({
@@ -11,16 +11,9 @@ class DestinationCard extends StatefulWidget {
   });
 
   @override
-  State<DestinationCard> createState() => _DestinationCardState();
-}
-
-class _DestinationCardState extends State<DestinationCard> {
-  bool _favori = false;
-
-  @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final destination = widget.destination;
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
 
     return Card(
       elevation: 0,
@@ -43,6 +36,7 @@ class _DestinationCardState extends State<DestinationCard> {
               ),
             ),
             const SizedBox(width: 14),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,14 +46,12 @@ class _DestinationCardState extends State<DestinationCard> {
                     destination.nom,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 6),
+
                   Row(
                     children: [
                       Icon(
@@ -73,11 +65,15 @@ class _DestinationCardState extends State<DestinationCard> {
                           destination.region,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: cs.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
+
                   Row(
                     children: [
                       const Icon(
@@ -90,8 +86,9 @@ class _DestinationCardState extends State<DestinationCard> {
                       const Spacer(),
                       Text(
                         '${destination.prix} DT',
-                        style: const TextStyle(
+                        style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: cs.primary,
                         ),
                       ),
                     ],
@@ -99,32 +96,9 @@ class _DestinationCardState extends State<DestinationCard> {
                 ],
               ),
             ),
-            const SizedBox(width: 4),
-            IconButton(
-              tooltip: _favori
-                  ? 'Retirer des favoris'
-                  : 'Ajouter aux favoris',
-              onPressed: () {
-                setState(() {
-                  _favori = !_favori;
-                });
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      _favori
-                          ? '${destination.nom} ajouté aux favoris'
-                          : '${destination.nom} retiré des favoris',
-                    ),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              },
-              icon: Icon(
-                _favori ? Icons.favorite : Icons.favorite_border,
-                color: _favori ? Colors.red : cs.onSurfaceVariant,
-              ),
-            ),
+            // Palier 6 : le bouton favori (son état est local)
+            const FavoriteButton(),
           ],
         ),
       ),
