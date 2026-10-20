@@ -44,15 +44,23 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             const HomeHeader(prenom: 'Abir'),
+
             const SizedBox(height: 20),
 
             const SearchBox(),
+
             const SizedBox(height: 24),
 
-            HeroBanner(destination: destinations.first),
+            HeroBanner(
+              destination: destinations.first,
+            ),
+
             const SizedBox(height: 24),
 
-            const SectionTitle(title: 'Catégories'),
+            const SectionTitle(
+              title: 'Catégories',
+            ),
+
             const SizedBox(height: 12),
 
             SingleChildScrollView(
@@ -81,11 +89,14 @@ class _HomeScreenState extends State<HomeScreen> {
               title: 'Populaires',
               action: 'Voir tout',
             ),
+
             const SizedBox(height: 12),
 
             if (_filtrees.isEmpty)
-              const Text(
-                'Aucune destination dans cette catégorie.',
+              const Center(
+                child: Text(
+                  'Aucune destination dans cette catégorie.',
+                ),
               )
             else
               for (final d in _filtrees)
@@ -99,18 +110,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-/*
-Q1. Sans setState(), la valeur de _categorie change
-en mémoire, mais Flutter ne reconstruit pas automatiquement
-l'écran. La puce et la liste affichées peuvent rester
-inchangées.
-
-Q2. _filtrees est un getter recalculé à chaque build()
-pour obtenir les destinations correspondant à la catégorie
-actuelle, sans conserver une liste filtrée obsolète.
-
-Q3. HeroBanner peut rester un StatelessWidget parce que
-son affichage dépend de la destination reçue en paramètre.
-Le changement de catégorie concerne la liste des cartes.
-*/

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
 
-class DestinationCard extends StatelessWidget {
+class DestinationCard extends StatefulWidget {
   final Destination destination;
 
   const DestinationCard({
@@ -11,8 +11,16 @@ class DestinationCard extends StatelessWidget {
   });
 
   @override
+  State<DestinationCard> createState() => _DestinationCardState();
+}
+
+class _DestinationCardState extends State<DestinationCard> {
+  bool _favori = false;
+
+  @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final destination = widget.destination;
 
     return Card(
       elevation: 0,
@@ -47,7 +55,9 @@ class DestinationCard extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                        ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 6),
                   Row(
@@ -89,19 +99,35 @@ class DestinationCard extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(width: 4),
+            IconButton(
+              tooltip: _favori
+                  ? 'Retirer des favoris'
+                  : 'Ajouter aux favoris',
+              onPressed: () {
+                setState(() {
+                  _favori = !_favori;
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      _favori
+                          ? '${destination.nom} ajouté aux favoris'
+                          : '${destination.nom} retiré des favoris',
+                    ),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+              icon: Icon(
+                _favori ? Icons.favorite : Icons.favorite_border,
+                color: _favori ? Colors.red : cs.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-/*
-Q7. Expanded donne à la Column une largeur limitée.
-La Row note/prix connaît donc l'espace disponible et
-Spacer peut occuper l'espace libre entre la note et le prix.
-
-Q8. Il faut ajouter une destination dans le fichier
-lib/data/destinations.dart. La boucle for dans HomeScreen
-affichera automatiquement la nouvelle carte.
-*/
